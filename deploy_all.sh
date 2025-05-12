@@ -373,6 +373,7 @@ export CRM_PROXY_CR_URL=$(gcloud run services describe "${SERVICE_NAME}" \
       --format="value(status.url)")
 
 export SERVICE_NAME="oms-mcp-service"
+export BASE_PATH="oms-mcp-proxy"
 export MCP_CLIENT_ID_VALUE="$OMS_API_KEY"
 export MCP_CLIENT_SECRET_VALUE="$OMS_SECRET"
 
@@ -394,6 +395,7 @@ export OMS_PROXY_CR_URL=$(gcloud run services describe "${SERVICE_NAME}" \
       --format="value(status.url)")
 
 export SERVICE_NAME="wms-mcp-service"
+export BASE_PATH="oms-mcp-proxy"
 export MCP_CLIENT_ID_VALUE="$WMS_API_KEY"
 export MCP_CLIENT_SECRET_VALUE="$WMS_SECRET"
 
@@ -442,5 +444,6 @@ echo "OMS Consumer Client ID: $OMS_API_KEY"
 echo "OMS Consumer Client Secret: $OMS_SECRET"
 echo "WMS Consumer Client ID: $WMS_API_KEY"
 echo "WMS Consumer Client Secret: $WMS_SECRET"
+echo "Apigee Host: $APIGEE_HOST"
 echo "--------------------------------------------------"
 echo "All deployments and configurations complete."
