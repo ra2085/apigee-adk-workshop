@@ -1,0 +1,59 @@
+{
+    "operationConfigs": [
+      {
+        "apiSource": "warehouse-management-api",
+        "operations": [
+          {
+            "resource": "/"
+          }
+        ],
+        "quota": {
+          "limit": "2000",
+          "interval": "5",
+          "timeUnit": "minute"
+        },
+        "attributes": [
+          {
+            "name": "hub_api",
+            "value": "warehouse-management-api"
+          },
+          {
+            "name": "hub_version",
+            "value": "1_0_0"
+          },
+          {
+            "name": "hub_spec",
+            "value": "warehouse-management-system-api"
+          }
+        ]
+      },
+      {
+        "apiSource": "shipping-carrier-api",
+        "operations": [
+          {
+            "resource": "/"
+          }
+        ],
+        "quota": {
+          "limit": "2000",
+          "interval": "5",
+          "timeUnit": "minute"
+        },
+        "attributes": [
+          {
+            "name": "hub_api",
+            "value": "shipping-carrier-api"
+          },
+          {
+            "name": "hub_version",
+            "value": " 1_0_0"
+          },
+          {
+            "name": "hub_spec",
+            "value": "shipping-carrier-api"
+          }
+        ]
+      }
+    ],
+    "operationConfigType": "proxy"
+}

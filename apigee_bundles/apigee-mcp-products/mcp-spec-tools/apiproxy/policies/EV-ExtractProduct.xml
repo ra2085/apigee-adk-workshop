@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ExtractVariables async="false" continueOnError="false" enabled="true" name="EV-ExtractProduct">
+    <DisplayName>EV-ExtractProduct</DisplayName>
+    <Properties/>
+    <Source>AccessEntity.AccessEntity-App</Source> 
+    <XMLPayload>
+        <Variable name="apiproducts" type="nodeset"> 
+            <XPath>/App/Credentials/Credential[Status='approved']/ApiProducts/ApiProduct[Status='approved' and Name!='mcp-product']/Name</XPath>
+        </Variable>
+  </XMLPayload>
+</ExtractVariables>

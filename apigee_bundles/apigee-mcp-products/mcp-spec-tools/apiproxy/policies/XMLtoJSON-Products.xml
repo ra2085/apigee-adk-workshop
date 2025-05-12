@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<XMLToJSON async="false" continueOnError="false" enabled="true" name="XMLtoJSON-Products">
+    <DisplayName>XMLtoJSON-Products</DisplayName>
+    <Properties/>
+    <Options>
+    <TreatAsArray>
+        <Path unwrap="true">/Products/Name</Path>
+    </TreatAsArray>
+    </Options>
+    <OutputVariable>response</OutputVariable>
+    <Source>response</Source>
+</XMLToJSON>

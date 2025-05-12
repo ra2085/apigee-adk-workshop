@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ExtractVariables async="false" continueOnError="false" enabled="true" name="EV-ExtractSpecs">
+    <DisplayName>EV-ExtractSpecs</DisplayName>
+    <Properties/>
+     <Source>AccessEntity.AccessEntity-Product</Source> 
+    <XMLPayload>
+        <Variable name="spec_ids" type="nodeset"> 
+            <XPath>/ApiProduct/OperationGroup/operationConfigs[attributes/Name='hub_api' or attributes/Name='hub_version' or attributes/Name='hub_spec']</XPath>
+        </Variable>
+        <Variable name="hub_location" type="string"> 
+            <XPath>/ApiProduct/Attributes/Attribute[Name='hub_location']/Value</XPath>
+        </Variable>
+  </XMLPayload>
+</ExtractVariables>

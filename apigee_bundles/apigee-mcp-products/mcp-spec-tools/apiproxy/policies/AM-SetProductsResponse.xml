@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<AssignMessage async="false" continueOnError="false" enabled="true" name="AM-SetProductsResponse">
+    <DisplayName>AM-SetProductsResponse</DisplayName>
+    <Set>
+        <Payload contentType="text/xml"><![CDATA[<Products>]]>{apiproducts}<![CDATA[</Products>]]></Payload>
+    </Set>
+    <IgnoreUnresolvedVariables>true</IgnoreUnresolvedVariables>
+    <AssignTo createNew="false" transport="http" type="response"/>
+</AssignMessage>

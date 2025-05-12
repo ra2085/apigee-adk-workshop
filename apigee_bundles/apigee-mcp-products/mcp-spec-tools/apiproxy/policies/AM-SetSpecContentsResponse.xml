@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<AssignMessage async="false" continueOnError="false" enabled="true" name="AM-SetSpecContentsResponse">
+    <DisplayName>AM-SetSpecContentsResponse</DisplayName>
+    <Properties/>
+    <AssignVariable>
+        <Name>spec_b64_contents</Name>
+        <Template>{jsonPath('$.contents',response.content,false)}</Template>
+    </AssignVariable>
+    <AssignVariable>
+    <Name>spec_contents</Name>
+    <Template>{decodeBase64(spec_b64_contents)}</Template>
+    </AssignVariable>
+    <Set>
+        <Payload contentType="text/yaml">{spec_contents}</Payload>
+    </Set>
+    <IgnoreUnresolvedVariables>true</IgnoreUnresolvedVariables>
+    <AssignTo createNew="false" transport="http" type="response"/>
+</AssignMessage>

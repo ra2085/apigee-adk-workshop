@@ -1,0 +1,59 @@
+{
+    "operationConfigs": [
+      {
+        "apiSource": "order-creation-api",
+        "operations": [
+          {
+            "resource": "/"
+          }
+        ],
+        "quota": {
+          "limit": "2000",
+          "interval": "5",
+          "timeUnit": "minute"
+        },
+        "attributes": [
+          {
+            "name": "hub_api",
+            "value": "orders-api"
+          },
+          {
+            "name": "hub_version",
+            "value": "1_0_0"
+          },
+          {
+            "name": "hub_spec",
+            "value": "orders-api"
+          }
+        ]
+      },
+      {
+        "apiSource": "product-catalog-and-availability-api",
+        "operations": [
+          {
+            "resource": "/"
+          }
+        ],
+        "quota": {
+          "limit": "2000",
+          "interval": "5",
+          "timeUnit": "minute"
+        },
+        "attributes": [
+          {
+            "name": "hub_api",
+            "value": "product-catalog-and-availability-api"
+          },
+          {
+            "name": "hub_version",
+            "value": "1_0_0"
+          },
+          {
+            "name": "hub_spec",
+            "value": "product-catalog-and-availability-api"
+          }
+        ]
+      }
+    ],
+    "operationConfigType": "proxy"
+}

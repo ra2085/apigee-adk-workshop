@@ -1,0 +1,319 @@
+openapi: 3.0.0
+info:
+  title: Warehouse Management System API
+  description: >-
+    Receives new order details from the OMS for picking and packing.
+
+    Updates order status back to the OMS (e.g., 'Awaiting Fulfillment',
+    'Picking', 'Packed').
+  version: 1.0.0
+  contact: {}
+servers:
+  - url: https://@APIGEE_HOST@/warehouse-management-system-api
+paths:
+  /orders:
+    post:
+      description: >-
+        This endpoint allows the OMS to create new order requests within the
+        WMS.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/itemordered'
+        description: Order details to be created.
+        required: true
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/itemordered'
+          description: Order created successfully.
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+          description: Bad Request - Invalid order details.
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+          description: Internal Server Error.
+      summary: Receives new order details from the OMS for picking and packing.
+      tags:
+        - orders
+  /orders/{orderId}:
+    delete:
+      description: This endpoint allows the cancellation of an order by its ID.
+      operationId: deleteOrder
+      responses:
+        '204':
+          description: Order successfully deleted
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+          description: Bad Request
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+          description: Order not found
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+          description: Internal Server Error
+      summary: Cancels an order
+      tags:
+        - orders
+    get:
+      description: Retrieves details of a specific order by its ID.
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/itemordered'
+          description: Successful operation
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+          description: Invalid order ID supplied
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+          description: Order not found
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+          description: Internal server error
+      summary: Retrieves details of a specific order by its ID
+      tags:
+        - orders
+    parameters:
+      - description: Unique identifier for the order
+        in: path
+        name: orderId
+        required: true
+        schema:
+          type: string
+    patch:
+      description: >-
+        Partially updates an existing order's details. This is used to modify
+        specific order information after it has been submitted.
+      operationId: patchOrder
+      requestBody:
+        content:
+          application/json:
+            schema:
+              properties:
+                billingAddress:
+                  description: Billing address for the order.
+                  type: string
+                customerName:
+                  description: Name of the customer who placed the order.
+                  type: string
+                items:
+                  description: List of items included in the order.
+                  items:
+                    properties:
+                      productId:
+                        description: Product ID of the item.
+                        type: string
+                      quantity:
+                        description: Quantity of the item.
+                        type: integer
+                    type: object
+                  type: array
+                orderPriority:
+                  description: The priority of the order (e.g., high, medium, low).
+                  type: string
+                shippingAddress:
+                  description: Shipping address for the order.
+                  type: string
+                shippingMethod:
+                  description: >-
+                    The method used for shipping the order (e.g., standard,
+                    express).
+                  type: string
+                totalAmount:
+                  description: Total amount of the order.
+                  format: double
+                  type: number
+              type: object
+        description: Partial order details to update
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/itemordered'
+          description: Order updated successfully
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+          description: Bad Request
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+          description: Order not found
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+          description: Internal Server Error
+      summary: Partially update an existing order's details
+      tags:
+        - orders
+    put:
+      description: >-
+        Updates an existing order's details, such as priority or shipping
+        address. This is used to modify order information after it has been
+        submitted.
+      operationId: updateOrder
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/itemordered'
+        description: Order details to be updated
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/itemordered'
+          description: Order updated successfully
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+          description: Invalid request data
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+          description: Order not found
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+          description: Internal server error
+      summary: Updates an existing order's details
+      tags:
+        - orders
+  /orders/{orderId}/status:
+    parameters:
+      - description: Unique identifier for the order being updated.
+        in: path
+        name: orderId
+        required: true
+        schema:
+          type: string
+    patch:
+      description: >-
+        Updates the status of an order (e.g., 'Awaiting Fulfillment', 'Picking',
+        'Packed', 'Shipped', 'Delivered'). This endpoint allows the WMS to
+        communicate order progress back to the OMS.
+      operationId: updateOrderStatus
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/error'
+        description: Order status update information.
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/itemordered'
+          description: Order status updated successfully.
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+          description: Invalid request.
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+          description: Order not found.
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+          description: Internal server error.
+      summary: Updates the status of an order
+      tags:
+        - orders
+components:
+  schemas:
+    error:
+      description: >-
+        Error object containing details about errors encountered during order
+        processing.
+      properties:
+        code:
+          description: Error code indicating the type of error.
+          type: string
+        field:
+          description: The field that caused the error, if applicable.
+          type: string
+        message:
+          description: Human-readable error message.
+          type: string
+      required:
+        - code
+        - message
+      type: object
+    itemordered:
+      description: Details of an item included in the order.
+      properties:
+        itemId:
+          description: Unique identifier for the item.
+          type: string
+        price:
+          description: Price per unit.
+          format: float
+          type: number
+        productName:
+          description: Name of the product ordered.
+          type: string
+        quantity:
+          description: Number of units ordered.
+          format: int32
+          type: integer
+      required:
+        - itemId
+        - productName
+        - quantity
+        - price
+      type: object

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<AssignMessage async="false" continueOnError="false" enabled="true" name="AM-VerifySpecId">
+    <DisplayName>AM-VerifySpecId</DisplayName>
+    <Properties/>
+    <AssignVariable>
+        <Name>find_spec_location</Name>
+        <Template>/ApiProduct/Attributes/Attribute[Value='projects/{project_id}/locations/{location_id}']/Value</Template>
+    </AssignVariable>
+    <AssignVariable>
+        <Name>find_api_id</Name>
+        <Template>/ApiProduct/OperationGroup/operationConfigs/attributes[Name='hub_api' and Value='{api_id}']/Value]</Template>
+    </AssignVariable>
+    <AssignVariable>
+        <Name>find_version_id</Name>
+        <Template>/ApiProduct/OperationGroup/operationConfigs/attributes[Name='hub_version' and Value='{version_id}']/Value]</Template>
+    </AssignVariable>
+    <AssignVariable>
+        <Name>find_spec_id</Name>
+        <Template>/ApiProduct/OperationGroup/operationConfigs/attributes[Name='hub_spec' and Value='{spec_id}']/Value]</Template>
+    </AssignVariable>
+    <AssignVariable>
+        <Name>found_spec_location</Name>
+        <Template>{xpath(find_spec_location,AccessEntity.AccessEntity-Product)}</Template>
+    </AssignVariable>
+    <AssignVariable>
+        <Name>found_api_id</Name>
+        <Template>{xpath(find_api_id,AccessEntity.AccessEntity-Product)}</Template>
+    </AssignVariable>
+    <AssignVariable>
+        <Name>found_version_id</Name>
+        <Template>{xpath(find_version_id,AccessEntity.AccessEntity-Product)}</Template>
+    </AssignVariable>
+    <AssignVariable>
+        <Name>found_spec_id</Name>
+        <Template>{xpath(find_spec_id,AccessEntity.AccessEntity-Product)}</Template>
+    </AssignVariable>
+    <IgnoreUnresolvedVariables>false</IgnoreUnresolvedVariables>
+    <AssignTo createNew="false" transport="http" type="request"/>
+</AssignMessage>

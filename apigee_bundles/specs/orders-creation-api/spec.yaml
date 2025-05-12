@@ -1,0 +1,511 @@
+openapi: 3.0.0
+info:
+  title: Order Management API
+  description: >-
+    <- Allows a customer-facing system (like an e-commerce website, mobile app,
+    or sales portal) to submit a new sales order into the Order Management
+    System (OMS) or ERP. This API enables customer-facing systems to submit new
+    sales orders to the Order Management System (OMS) or ERP. It handles
+    customer details, ordered items, quantities, pricing, and shipping/billing
+    addresses.
+  version: 1.0.0
+  contact: {}
+tags:
+  - name: orders
+    description: Operations related to order management
+servers:
+  - url: https://@APIGEE_HOST@/order-creation-api
+paths:
+  /orders:
+    get:
+      summary: List all orders
+      description: Retrieves a list of orders, with support for pagination and filtering.
+      tags:
+        - orders
+      parameters:
+        - name: customerId
+          in: query
+          required: false
+          description: Filter orders by customer ID.
+          schema:
+            type: string
+        - name: status
+          in: query
+          required: false
+          description: Filter orders by status.
+          schema:
+            type: string
+            enum:
+              - Pending
+              - AwaitingPayment
+              - AwaitingFulfillment
+              - AwaitingShipment
+              - Shipped
+              - PartiallyShipped
+              - Delivered
+              - Cancelled
+              - Returned
+              - Disputed
+        - name: dateFrom
+          in: query
+          required: false
+          description: Filter orders created on or after this date (YYYY-MM-DD).
+          schema:
+            type: string
+            format: date
+        - name: dateTo
+          in: query
+          required: false
+          description: Filter orders created on or before this date (YYYY-MM-DD).
+          schema:
+            type: string
+            format: date
+        - name: limit
+          in: query
+          required: false
+          description: Maximum number of orders to return.
+          schema:
+            type: integer
+            format: int32
+            default: 20
+            minimum: 1
+            maximum: 100
+        - name: offset
+          in: query
+          required: false
+          description: Number of orders to skip for pagination.
+          schema:
+            type: integer
+            format: int32
+            default: 0
+            minimum: 0
+      responses:
+        '200':
+          description: A list of orders.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Order'
+          headers:
+            X-Total-Count:
+              description: Total number of orders matching the query.
+              schema:
+                type: integer
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    post:
+      description: >-
+        This endpoint creates a new order record using the provided customer
+        details, item information, and addresses.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrderInput'
+        description: Order details to be submitted.
+        required: true
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+          description: Order created successfully.
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+      summary: Submits a new sales order to the OMS/ERP
+      tags:
+        - orders
+  /orders/{orderId}:
+    get:
+      summary: Retrieve a specific order
+      description: Fetches the details of an order by its unique ID.
+      tags:
+        - orders
+      parameters:
+        - name: orderId
+          in: path
+          required: true
+          description: Unique identifier of the order.
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successfully retrieved order details.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    put:
+      summary: Update an existing order
+      description: >-
+        Modifies the details of an existing order. This could be used to change
+        items, addresses, or other mutable order attributes before processing or
+        shipment.
+      tags:
+        - orders
+      parameters:
+        - name: orderId
+          in: path
+          required: true
+          description: Unique identifier of the order to update.
+          schema:
+            type: string
+      requestBody:
+        description: Order data to update.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrderUpdate'
+      responses:
+        '200':
+          description: Order updated successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '409':
+          description: Conflict - Order cannot be updated in its current state.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    delete:
+      summary: Cancel an order
+      description: >-
+        Marks an order as cancelled if it's in a state that allows cancellation
+        (e.g., not yet shipped).
+      tags:
+        - orders
+      parameters:
+        - name: orderId
+          in: path
+          required: true
+          description: Unique identifier of the order to cancel.
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Order cancelled successfully.
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '409':
+          description: Conflict - Order cannot be cancelled in its current state.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+components:
+  schemas:
+    BillingAddress:
+      description: Address to which the order will be billed.
+      properties:
+        city:
+          description: Billing city.
+          type: string
+        country:
+          description: Billing country.
+          type: string
+        state:
+          description: Billing state.
+          type: string
+        street:
+          description: Billing street address.
+          type: string
+        zip:
+          description: Billing zip code.
+          type: string
+      required:
+        - city
+        - country
+        - state
+        - street
+        - zip
+      type: object
+    CustomerDetails:
+      description: Details of the customer placing the order.
+      properties:
+        customerId:
+          description: Unique identifier for the customer.
+          type: string
+        email:
+          description: Customer's email address.
+          format: email
+          type: string
+        firstName:
+          description: Customer's first name.
+          type: string
+        lastName:
+          description: Customer's last name.
+          type: string
+        phone:
+          description: Customer's phone number.
+          type: string
+      required:
+        - customerId
+        - email
+        - firstName
+        - lastName
+        - phone
+      type: object
+    Error:
+      description: Error object containing details about errors encountered.
+      properties:
+        code:
+          description: Error code indicating the type of error.
+          type: string
+        field:
+          description: The field that caused the error, if applicable.
+          type: string
+          nullable: true
+        message:
+          description: Human-readable error message.
+          type: string
+      required:
+        - code
+        - message
+      example:
+        code: INTERNAL_ERROR
+        message: An unexpected error occurred.
+      type: object
+    ItemOrdered:
+      description: Details of an item included in the order.
+      properties:
+        itemId:
+          description: Unique identifier for the item.
+          type: string
+        price:
+          description: Price per unit.
+          format: float
+          type: number
+        productName:
+          description: Name of the product ordered.
+          type: string
+        quantity:
+          description: Number of units ordered.
+          format: int32
+          type: integer
+      required:
+        - itemId
+        - productName
+        - quantity
+        - price
+      type: object
+    Order:
+      description: Represents a sales order within the OMS.
+      properties:
+        orderId:
+          description: Unique identifier for the order (generated by the system).
+          readOnly: true
+          type: string
+        customerDetails:
+          $ref: '#/components/schemas/CustomerDetails'
+        itemsOrdered:
+          description: List of items included in the order.
+          type: array
+          items:
+            $ref: '#/components/schemas/ItemOrdered'
+        shippingAddress:
+          $ref: '#/components/schemas/ShippingAddress'
+        billingAddress:
+          $ref: '#/components/schemas/BillingAddress'
+        paymentDetails:
+          $ref: '#/components/schemas/PaymentDetails'
+        notes:
+          description: Any special notes or instructions for the order.
+          type: string
+          nullable: true
+        orderDate:
+          description: Date and time the order was placed.
+          format: date-time
+          type: string
+          readOnly: true
+        lastUpdateDate:
+          description: Date and time the order was last updated.
+          format: date-time
+          type: string
+          readOnly: true
+        orderTotal:
+          description: Total amount of the order.
+          format: float
+          type: number
+          readOnly: true
+        orderStatus:
+          description: Current status of the order.
+          type: string
+          enum:
+            - Pending
+            - AwaitingPayment
+            - AwaitingFulfillment
+            - AwaitingShipment
+            - Shipped
+            - PartiallyShipped
+            - Delivered
+            - Cancelled
+            - Returned
+            - Disputed
+          example: Pending
+      required:
+        - orderId
+        - customerDetails
+        - itemsOrdered
+        - shippingAddress
+        - billingAddress
+        - orderTotal
+        - orderDate
+        - orderStatus
+      type: object
+    ShippingAddress:
+      description: Address to which the order will be shipped.
+      properties:
+        city:
+          description: Shipping city.
+          type: string
+        country:
+          description: Shipping country.
+          type: string
+        state:
+          description: Shipping state.
+          type: string
+        street:
+          description: Shipping street address.
+          type: string
+        zip:
+          description: Shipping zip code.
+          type: string
+      required:
+        - city
+        - country
+        - state
+        - street
+        - zip
+      type: object
+    OrderInput:
+      description: Data required to create a new sales order.
+      properties:
+        customerDetails:
+          $ref: '#/components/schemas/CustomerDetails'
+        itemsOrdered:
+          description: List of items to be included in the order.
+          type: array
+          items:
+            $ref: '#/components/schemas/ItemOrdered'
+          minItems: 1
+        shippingAddress:
+          $ref: '#/components/schemas/ShippingAddress'
+        billingAddress:
+          $ref: '#/components/schemas/BillingAddress'
+        paymentDetails:
+          $ref: '#/components/schemas/PaymentDetails'
+        notes:
+          description: Any special notes or instructions for the order.
+          type: string
+          nullable: true
+      required:
+        - customerDetails
+        - itemsOrdered
+        - shippingAddress
+        - billingAddress
+      type: object
+    OrderUpdate:
+      description: >-
+        Data for updating an existing order. Provide the new state for fields to
+        be updated.
+      properties:
+        customerDetails:
+          $ref: '#/components/schemas/CustomerDetails'
+        itemsOrdered:
+          description: Updated list of items in the order.
+          type: array
+          items:
+            $ref: '#/components/schemas/ItemOrdered'
+          minItems: 1
+        shippingAddress:
+          $ref: '#/components/schemas/ShippingAddress'
+        billingAddress:
+          $ref: '#/components/schemas/BillingAddress'
+        paymentDetails:
+          $ref: '#/components/schemas/PaymentDetails'
+        notes:
+          description: Any special notes or instructions for the order.
+          type: string
+          nullable: true
+        orderStatus:
+          description: New status for the order.
+          type: string
+          enum:
+            - Pending
+            - AwaitingPayment
+            - AwaitingFulfillment
+            - AwaitingShipment
+            - Shipped
+            - PartiallyShipped
+            - Delivered
+            - Cancelled
+            - Returned
+            - Disputed
+      type: object
+    PaymentDetails:
+      description: Payment information for the order.
+      properties:
+        paymentMethod:
+          type: string
+          description: Method of payment (e.g., Credit Card, PayPal).
+          example: Credit Card
+        transactionId:
+          type: string
+          description: Transaction ID from the payment gateway, if applicable.
+          example: txn_123456789
+        paymentStatus:
+          type: string
+          description: Status of the payment.
+          enum:
+            - Pending
+            - Authorized
+            - Paid
+            - Failed
+            - Refunded
+          example: Authorized
+      required:
+        - paymentMethod
+      type: object
+  responses:
+    BadRequest:
+      description: Bad Request - Invalid input.
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/Error'
+    NotFoundError:
+      description: Resource not found.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    InternalServerError:
+      description: Internal Server Error.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'

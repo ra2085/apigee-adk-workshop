@@ -1,0 +1,303 @@
+openapi: 3.0.0
+info:
+  title: Shipping Carrier API
+  description: >-
+    This API facilitates shipping operations, including generating shipping
+    labels, scheduling pickups, and retrieving tracking information.
+
+
+    * Generates shipping labels.
+
+    * Scheduled pickups.
+
+    * Retrieves tracking numbers and status updates.
+  version: 1.0.0
+  contact: {}
+servers:
+  - url: https://@APIGEE_HOST@/shipping-carrier-api
+paths:
+  /labels:
+    post:
+      description: Generates a shipping label with the provided details.
+      operationId: generateLabel
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LabelRequest'
+        description: Request body for generating a shipping label.
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LabelResponse'
+          description: Successful label generation.
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+          description: Bad Request - Invalid input.
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+          description: Internal Server Error.
+      summary: Generates a shipping label.
+      tags:
+        - labels
+  /pickups:
+    post:
+      description: Schedules a shipping pickup.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PickupRequest'
+        description: Request body for scheduling a pickup.
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inventorycheckresponse'
+          description: Successful pickup scheduling
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+          description: Bad Request
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+          description: Internal Server Error
+      summary: Schedules a shipping pickup
+      tags:
+        - pickups
+  /trackings/{trackingNumber}:
+    get:
+      description: Retrieves tracking information for a given tracking number.
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TrackingInfo'
+          description: Successful operation
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+          description: Invalid tracking number
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+          description: Tracking number not found
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+          description: Internal server error
+      summary: Retrieve tracking information
+      tags:
+        - tracking
+    parameters:
+      - description: The tracking number to retrieve information for.
+        in: path
+        name: trackingNumber
+        required: true
+        schema:
+          type: string
+components:
+  schemas:
+    LabelRequest:
+      description: Request object for generating a shipping label.
+      properties:
+        packageDimensions:
+          description: Dimensions of the package (e.g., 10x5x3).
+          type: string
+        packageWeight:
+          description: Weight of the package in pounds.
+          format: float
+          type: number
+        recipientAddress:
+          description: Address of the recipient.
+          type: string
+        recipientCity:
+          description: City of the recipient.
+          type: string
+        recipientName:
+          description: Name of the recipient.
+          type: string
+        recipientState:
+          description: State of the recipient.
+          type: string
+        recipientZip:
+          description: Zip code of the recipient.
+          type: string
+        senderAddress:
+          description: Address of the sender.
+          type: string
+        senderCity:
+          description: City of the sender.
+          type: string
+        senderName:
+          description: Name of the sender.
+          type: string
+        senderState:
+          description: State of the sender.
+          type: string
+        senderZip:
+          description: Zip code of the sender.
+          type: string
+        shippingOptions:
+          description: Shipping options (e.g., priority, express).
+          type: string
+      required:
+        - packageDimensions
+        - packageWeight
+        - recipientAddress
+        - recipientCity
+        - recipientName
+        - recipientState
+        - recipientZip
+        - senderAddress
+        - senderCity
+        - senderName
+        - senderState
+        - senderZip
+        - shippingOptions
+      type: object
+    LabelResponse:
+      description: Response containing the generated shipping label information.
+      properties:
+        labelImage:
+          description: Base64 encoded image of the shipping label.
+          type: string
+        shippingCost:
+          description: Cost of shipping.
+          format: float
+          type: number
+        trackingNumber:
+          description: Tracking number associated with the label.
+          type: string
+      required:
+        - labelImage
+        - shippingCost
+        - trackingNumber
+      type: object
+    PickupRequest:
+      description: Request body for scheduling a shipping pickup.
+      properties:
+        contactName:
+          description: Contact name for the pickup.
+          type: string
+        contactPhone:
+          description: Contact phone number for the pickup.
+          type: string
+        pickupAddress:
+          description: Address for the pickup.
+          type: string
+        pickupCity:
+          description: City for the pickup.
+          type: string
+        pickupDate:
+          description: Date for the pickup (YYYY-MM-DD).
+          format: date
+          type: string
+        pickupState:
+          description: State for the pickup.
+          type: string
+        pickupTime:
+          description: Time for the pickup (HH:MM).
+          format: time
+          type: string
+        pickupZip:
+          description: Zip code for the pickup.
+          type: string
+      required:
+        - contactName
+        - contactPhone
+        - pickupAddress
+        - pickupCity
+        - pickupDate
+        - pickupState
+        - pickupTime
+        - pickupZip
+      type: object
+    TrackingInfo:
+      description: Tracking information for a shipment.
+      properties:
+        estimatedDeliveryDate:
+          description: Estimated delivery date (YYYY-MM-DD).
+          format: date
+          type: string
+        location:
+          description: Current location of the shipment.
+          type: string
+        status:
+          description: Current status of the shipment (e.g., In Transit, Delivered).
+          type: string
+        statusUpdates:
+          description: A list of status updates for the shipment.
+          items:
+            description: Status update message.
+            type: string
+          type: array
+        trackingNumber:
+          description: The tracking number.
+          type: string
+      required:
+        - trackingNumber
+        - status
+      type: object
+    error:
+      description: Schema for error responses.
+      properties:
+        code:
+          description: Error code identifying the type of error.
+          type: string
+        details:
+          description: Optional details about the error.
+          type: string
+        message:
+          description: Human-readable error message.
+          type: string
+      required:
+        - code
+        - message
+      type: object
+    inventorycheckresponse:
+      description: The response containing the available quantity and location of the item.
+      properties:
+        availableQuantity:
+          description: The quantity of the item currently available in inventory.
+          type: integer
+        location:
+          description: >-
+            The location of the item in the warehouse or inventory system (if
+            applicable).
+          type: string
+        sku:
+          description: The Stock Keeping Unit (SKU) of the item checked.
+          type: string
+        timestamp:
+          description: The timestamp of when the inventory check was performed.
+          format: date-time
+          type: string
+      required:
+        - availableQuantity
+        - sku
+        - timestamp
+      type: object

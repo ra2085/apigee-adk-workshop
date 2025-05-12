@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ExtractVariables async="false" continueOnError="false" enabled="true" name="EV-ExtractProductName">
+    <DisplayName>EV-ExtractProductName</DisplayName>
+    <Properties/>
+    <URIPath>
+      <Pattern ignoreCase="true">/products/{product_name}/specs</Pattern>
+    </URIPath>
+    <IgnoreUnresolvedVariables>false</IgnoreUnresolvedVariables>
+    <Source clearPayload="false">request</Source>
+</ExtractVariables>

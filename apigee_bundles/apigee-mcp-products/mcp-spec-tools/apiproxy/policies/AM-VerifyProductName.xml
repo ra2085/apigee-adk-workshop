@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<AssignMessage async="false" continueOnError="false" enabled="true" name="AM-VerifyProductName">
+    <DisplayName>AM-VerifyProductName</DisplayName>
+    <Properties/>
+    <AssignVariable>
+        <Name>find_product_name</Name>
+        <Template>/App/Credentials/Credential[Status='approved']/ApiProducts/ApiProduct[Status='approved' and Name='{product_name}']/Name</Template>
+    </AssignVariable>
+    <AssignVariable>
+        <Name>found_product_name</Name>
+        <Template>{xpath(find_product_name,AccessEntity.AccessEntity-App)}</Template>
+    </AssignVariable>
+    <IgnoreUnresolvedVariables>false</IgnoreUnresolvedVariables>
+    <AssignTo createNew="false" transport="http" type="request"/>
+</AssignMessage>

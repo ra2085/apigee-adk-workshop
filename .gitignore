@@ -1,0 +1,12 @@
+config
+.env
+.envrc
+build
+to_delete
+*.code-workspace
+dev
+target
+.venv
+schema
+__pycache__
+.DS_Store
