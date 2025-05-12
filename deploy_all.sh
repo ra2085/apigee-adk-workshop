@@ -272,11 +272,17 @@ apigeecli apihub apis versions create --api-id warehouse-management-system-api -
 apigeecli apihub apis versions specs create --api-id warehouse-management-system-api -d warehouse-management-system-api.yaml -i warehouse-management-system-api -v 1_0_0 -f ./apigee_bundles/specs/warehouse-management-system-api/spec.yaml --org "$PROJECT" -r "$REGION" --token "$TOKEN"
 
 echo "Configuring Apigee proxy target URLs..."
-sed "${sedi_args[@]}" "s#@TARGETURL@/$CUSTOMERS_API_CR_URL#g" ./apigee_bundles/apigee-mcp-products/customers-api/apiproxy/targets/default.xml
-sed "${sedi_args[@]}" "s#@TARGETURL@/$ORDERS_API_CR_URL#g" ./apigee_bundles/apigee-mcp-products/order-creation-api/apiproxy/targets/default.xml
-sed "${sedi_args[@]}" "s#@TARGETURL@/$PRODUCTS_API_CR_URL#g" ./apigee_bundles/apigee-mcp-products/product-catalog-and-availability-api/apiproxy/targets/default.xml
-sed "${sedi_args[@]}" "s#@TARGETURL@/$SHIPPING_API_CR_URL#g" ./apigee_bundles/apigee-mcp-products/shipping-carrier-api/apiproxy/targets/default.xml
-sed "${sedi_args[@]}" "s#@TARGETURL@/$WAREHOUSE_API_CR_URL#g" ./apigee_bundles/apigee-mcp-products/warehouse-management-system-api/apiproxy/targets/default.xml
+export CUSTOMERS_API_CR_URL="${CUSTOMERS_API_CR_URL#https://}"
+export ORDERS_API_CR_URL="${ORDERS_API_CR_URL#https://}"
+export PRODUCTS_API_CR_URL="${PRODUCTS_API_CR_URL#https://}"
+export SHIPPING_API_CR_URL="${SHIPPING_API_CR_URL#https://}"
+export WAREHOUSE_API_CR_URL="${WAREHOUSE_API_CR_URL#https://}"
+
+sed "${sedi_args[@]}" "s/TARGETURL/$CUSTOMERS_API_CR_URL/g" ./apigee_bundles/apigee-mcp-products/customers-api/apiproxy/targets/default.xml
+sed "${sedi_args[@]}" "s/TARGETURL/$ORDERS_API_CR_URL/g" ./apigee_bundles/apigee-mcp-products/order-creation-api/apiproxy/targets/default.xml
+sed "${sedi_args[@]}" "s/TARGETURL/$PRODUCTS_API_CR_URL/g" ./apigee_bundles/apigee-mcp-products/product-catalog-and-availability-api/apiproxy/targets/default.xml
+sed "${sedi_args[@]}" "s/TARGETURL/$SHIPPING_API_CR_URL/g" ./apigee_bundles/apigee-mcp-products/shipping-carrier-api/apiproxy/targets/default.xml
+sed "${sedi_args[@]}" "s/TARGETURL/$WAREHOUSE_API_CR_URL/g" ./apigee_bundles/apigee-mcp-products/warehouse-management-system-api/apiproxy/targets/default.xml
 
 echo "Deploying keypair configuration..."
 echo -e "public_key=$PU_KEY\nprivate_key=$PR_KEY" >oauth_configuration.properties
