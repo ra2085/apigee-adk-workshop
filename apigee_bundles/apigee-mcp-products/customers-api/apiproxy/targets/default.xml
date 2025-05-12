@@ -22,9 +22,9 @@ limitations under the License.
   <HTTPTargetConnection>
     <Authentication>
       <GoogleIDToken>
-        <Audience>TARGETURL</Audience>
+        <Audience>https://TARGETURL</Audience>
       </GoogleIDToken>
     </Authentication>
-    <URL>TARGETURL</URL>
+    <URL>https://TARGETURL</URL>
   </HTTPTargetConnection>
 </TargetEndpoint>

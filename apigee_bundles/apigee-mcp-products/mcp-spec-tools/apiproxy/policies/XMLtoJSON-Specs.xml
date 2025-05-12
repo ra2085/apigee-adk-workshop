@@ -2,8 +2,7 @@
 <XMLToJSON async="false" continueOnError="false" enabled="true" name="XMLtoJSON-Specs">
     <DisplayName>XMLtoJSON-Specs</DisplayName>
     <Properties/>
-    <Options>
-    </Options>
+    <Format>yahoo</Format>
     <OutputVariable>response</OutputVariable>
     <Source>response</Source>
 </XMLToJSON>
