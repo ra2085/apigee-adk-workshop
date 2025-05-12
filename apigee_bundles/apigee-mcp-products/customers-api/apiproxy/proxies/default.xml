@@ -19,10 +19,7 @@ limitations under the License.
   <PreFlow name="PreFlow">
     <Request>
       <Step>
-        <Name>SA-ByClientIp</Name>
-      </Step>
-      <Step>
-        <Name>OAS-Validate</Name>
+        <Name>OAuth-VerifyAccessToken</Name>
       </Step>
     </Request>
   </PreFlow>
