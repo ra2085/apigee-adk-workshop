@@ -327,15 +327,120 @@ apigeecli products create --name wms-product --display-name "WMS Product" --envs
 echo "Creating Developer"
 apigeecli developers create --user consumer --email mcpconsumer@cymbal.com --first Consumer --last Doe --org "$PROJECT" --token "$TOKEN"
 
-echo "Creating Developer App"
-apigeecli apps create --name sample-mcp-consumer-app --email mcpconsumer@cymbal.com --prods mcp-product --callback https://developers.google.com/oauthplayground/ --org "$PROJECT" --token "$TOKEN" --disable-check
+echo "Creating CRM Developer App"
+apigeecli apps create --name crm-consumer-app --email mcpconsumer@cymbal.com --prods mcp-product,crm-product --callback https://developers.google.com/oauthplayground/ --org "$PROJECT" --token "$TOKEN" --disable-check
 
-TOKEN_AUDIENCE=$(apigeecli apps get --name sample-mcp-consumer-app --org "$PROJECT" --token "$TOKEN" --disable-check | jq ."[0].credentials[0].consumerKey" -r)
-IDP_APP_CLIENT_ID="$TOKEN_AUDIENCE"
-IDP_APP_CLIENT_SECRET=$(apigeecli apps get --name sample-mcp-consumer-app --org "$PROJECT" --token "$TOKEN" --disable-check | jq ."[0].credentials[0].consumerSecret" -r)
+echo "Creating OMS Developer App"
+apigeecli apps create --name oms-consumer-app --email mcpconsumer@cymbal.com --prods mcp-product,oms-product --callback https://developers.google.com/oauthplayground/ --org "$PROJECT" --token "$TOKEN" --disable-check
+
+echo "Creating WMS Developer App"
+apigeecli apps create --name wms-consumer-app --email mcpconsumer@cymbal.com --prods mcp-product,wms-product --callback https://developers.google.com/oauthplayground/ --org "$PROJECT" --token "$TOKEN" --disable-check
+
+
+CRM_API_KEY=$(apigeecli apps get --name crm-consumer-app --org "$PROJECT" --token "$TOKEN" --disable-check | jq ."[0].credentials[0].consumerKey" -r)
+CRM_SECRET=$(apigeecli apps get --name crm-consumer-app --org "$PROJECT" --token "$TOKEN" --disable-check | jq ."[0].credentials[0].consumerSecret" -r)
+
+OMS_API_KEY=$(apigeecli apps get --name oms-consumer-app --org "$PROJECT" --token "$TOKEN" --disable-check | jq ."[0].credentials[0].consumerKey" -r)
+OMS_SECRET=$(apigeecli apps get --name oms-consumer-app --org "$PROJECT" --token "$TOKEN" --disable-check | jq ."[0].credentials[0].consumerSecret" -r)
+
+WMS_API_KEY=$(apigeecli apps get --name wms-consumer-app --org "$PROJECT" --token "$TOKEN" --disable-check | jq ."[0].credentials[0].consumerKey" -r)
+WMS_SECRET=$(apigeecli apps get --name wms-consumer-app --org "$PROJECT" --token "$TOKEN" --disable-check | jq ."[0].credentials[0].consumerSecret" -r)
+
+export PROJECT_ID="$PROJECT"
+export REGION="$REGION"
+export SERVICE_NAME="crm-mcp-service"
+export MCP_BASE_URL_VALUE="https://$APIGEE_HOST/mcp"
+
+export BASE_PATH="crm-mcp-proxy"
+export MCP_CLIENT_ID_VALUE="$CRM_API_KEY"
+export MCP_CLIENT_SECRET_VALUE="$CRM_SECRET"
+
+gcloud run deploy ${SERVICE_NAME} \
+  --image gcr.io/apigee-hw/apigee-mcp-service:latest \
+  --platform managed \
+  --region ${REGION} \
+  --no-allow-unauthenticated \
+  --set-env-vars "NODE_ENV=production" \
+  --set-env-vars "MCP_MODE=SSE" \
+  --set-env-vars "MCP_CLIENT_ID=${MCP_CLIENT_ID_VALUE}" \
+  --set-env-vars "MCP_CLIENT_SECRET=${MCP_CLIENT_SECRET_VALUE}" \
+  --set-env-vars "MCP_BASE_URL=${MCP_BASE_URL_VALUE}" \
+  --set-env-vars "BASE_PATH=${BASE_PATH}"
+
+export CRM_PROXY_CR_URL=$(gcloud run services describe "${SERVICE_NAME}" \
+      --platform="managed" \
+      --region="${REGION}" \
+      --format="value(status.url)")
+
+export SERVICE_NAME="oms-mcp-service"
+export MCP_CLIENT_ID_VALUE="$OMS_API_KEY"
+export MCP_CLIENT_SECRET_VALUE="$OMS_SECRET"
+
+gcloud run deploy ${SERVICE_NAME} \
+  --image gcr.io/apigee-hw/apigee-mcp-service:latest \
+  --platform managed \
+  --region ${REGION} \
+  --no-allow-unauthenticated \
+  --set-env-vars "NODE_ENV=production" \
+  --set-env-vars "MCP_MODE=SSE" \
+  --set-env-vars "MCP_CLIENT_ID=${MCP_CLIENT_ID_VALUE}" \
+  --set-env-vars "MCP_CLIENT_SECRET=${MCP_CLIENT_SECRET_VALUE}" \
+  --set-env-vars "MCP_BASE_URL=${MCP_BASE_URL_VALUE}" \
+  --set-env-vars "BASE_PATH=${BASE_PATH}"
+
+export OMS_PROXY_CR_URL=$(gcloud run services describe "${SERVICE_NAME}" \
+      --platform="managed" \
+      --region="${REGION}" \
+      --format="value(status.url)")
+
+export SERVICE_NAME="wms-mcp-service"
+export MCP_CLIENT_ID_VALUE="$WMS_API_KEY"
+export MCP_CLIENT_SECRET_VALUE="$WMS_SECRET"
+
+gcloud run deploy ${SERVICE_NAME} \
+  --image gcr.io/apigee-hw/apigee-mcp-service:latest \
+  --platform managed \
+  --region ${REGION} \
+  --no-allow-unauthenticated \
+  --set-env-vars "NODE_ENV=production" \
+  --set-env-vars "MCP_MODE=SSE" \
+  --set-env-vars "MCP_CLIENT_ID=${MCP_CLIENT_ID_VALUE}" \
+  --set-env-vars "MCP_CLIENT_SECRET=${MCP_CLIENT_SECRET_VALUE}" \
+  --set-env-vars "MCP_BASE_URL=${MCP_BASE_URL_VALUE}" \
+  --set-env-vars "BASE_PATH=${BASE_PATH}"
+
+export WMS_PROXY_CR_URL=$(gcloud run services describe "${SERVICE_NAME}" \
+      --platform="managed" \
+      --region="${REGION}" \
+      --format="value(status.url)")
+
+echo "Configuring Apigee MCP proxies target URLs..."
+export CRM_PROXY_CR_URL="${CRM_PROXY_CR_URL#https://}"
+export OMS_PROXY_CR_URL="${OMS_PROXY_CR_URL#https://}"
+export WMS_PROXY_CR_URL="${WMS_PROXY_CR_URL#https://}"
+
+sed "${sedi_args[@]}" "s/TARGETURL/$CRM_PROXY_CR_URL/g" ./apigee_bundles/apigee-mcp-products/crm-mcp-proxy/apiproxy/targets/default.xml
+sed "${sedi_args[@]}" "s/TARGETURL/$OMS_PROXY_CR_URL/g" ./apigee_bundles/apigee-mcp-products/oms-mcp-proxy/apiproxy/targets/default.xml
+sed "${sedi_args[@]}" "s/TARGETURL/$WMS_PROXY_CR_URL/g" ./apigee_bundles/apigee-mcp-products/wms-mcp-proxy/apiproxy/targets/default.xml
+
+echo "Importing and Deploying crm-mcp-proxy ..."
+REV=$(apigeecli apis create bundle -f ./apigee_bundles/apigee-mcp-products/crm-mcp-proxy/apiproxy -n crm-mcp-proxy --org "$PROJECT" --token "$TOKEN" --disable-check | jq ."revision" -r)
+apigeecli apis deploy --wait --name crm-mcp-proxy --ovr --rev "$REV" --org "$PROJECT" --env "$APIGEE_ENV" --token "$TOKEN" --sa "$SA_EMAIL"
+
+echo "Importing and Deploying oms-mcp-proxy ..."
+REV=$(apigeecli apis create bundle -f ./apigee_bundles/apigee-mcp-products/oms-mcp-proxy/apiproxy -n oms-mcp-proxy --org "$PROJECT" --token "$TOKEN" --disable-check | jq ."revision" -r)
+apigeecli apis deploy --wait --name oms-mcp-proxy --ovr --rev "$REV" --org "$PROJECT" --env "$APIGEE_ENV" --token "$TOKEN" --sa "$SA_EMAIL"
+
+echo "Importing and Deploying wms-mcp-proxy ..."
+REV=$(apigeecli apis create bundle -f ./apigee_bundles/apigee-mcp-products/wms-mcp-proxy/apiproxy -n wms-mcp-proxy --org "$PROJECT" --token "$TOKEN" --disable-check | jq ."revision" -r)
+apigeecli apis deploy --wait --name wms-mcp-proxy --ovr --rev "$REV" --org "$PROJECT" --env "$APIGEE_ENV" --token "$TOKEN" --sa "$SA_EMAIL"
 
 echo "--------------------------------------------------"
-echo "MCP Consumer Client ID: $IDP_APP_CLIENT_ID"
-echo "MCP Consumer Client Secret: $IDP_APP_CLIENT_SECRET"
+echo "CRM Consumer Client ID: $CRM_API_KEY"
+echo "CRM Consumer Client Secret: $CRM_SECRET"
+echo "OMS Consumer Client ID: $OMS_API_KEY"
+echo "OMS Consumer Client Secret: $OMS_SECRET"
+echo "WMS Consumer Client ID: $WMS_API_KEY"
+echo "WMS Consumer Client Secret: $WMS_SECRET"
 echo "--------------------------------------------------"
 echo "All deployments and configurations complete."

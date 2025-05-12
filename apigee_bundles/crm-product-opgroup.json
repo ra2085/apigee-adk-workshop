@@ -26,6 +26,19 @@
             "value": "customers-api"
           }
         ]
+      },
+      {
+        "apiSource": "crm-mcp-proxy",
+        "operations": [
+          {
+            "resource": "/"
+          }
+        ],
+        "quota": {
+          "limit": "2000",
+          "interval": "5",
+          "timeUnit": "minute"
+        }
       }
     ],
     "operationConfigType": "proxy"
