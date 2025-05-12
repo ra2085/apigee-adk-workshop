@@ -1,7 +1,6 @@
 config
 .env
 .envrc
-build
 to_delete
 *.code-workspace
 dev
