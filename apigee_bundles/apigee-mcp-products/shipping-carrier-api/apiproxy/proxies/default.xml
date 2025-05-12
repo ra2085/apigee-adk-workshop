@@ -19,7 +19,7 @@ limitations under the License.
   <PreFlow name="PreFlow">
     <Request>
       <Step>
-        <Name>OAuth-VerifyAccessToken</Name>
+        <Name>OAuth-VerifyAccessToken1</Name>
       </Step>
     </Request>
   </PreFlow>
