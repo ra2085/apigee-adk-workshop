@@ -395,7 +395,7 @@ export OMS_PROXY_CR_URL=$(gcloud run services describe "${SERVICE_NAME}" \
       --format="value(status.url)")
 
 export SERVICE_NAME="wms-mcp-service"
-export BASE_PATH="oms-mcp-proxy"
+export BASE_PATH="wms-mcp-proxy"
 export MCP_CLIENT_ID_VALUE="$WMS_API_KEY"
 export MCP_CLIENT_SECRET_VALUE="$WMS_SECRET"
 
