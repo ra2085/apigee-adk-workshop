@@ -337,7 +337,7 @@ This lab demonstrates how ADK can be used to build modular, intelligent componen
 
 <b>What’s next?</b>
 To further your understanding:
-*   Explore the [Google Agent Development Kit (ADK)](https://google.github.io/adk-docs/) documentation (link to official docs if available, otherwise a general search term).
+*   Explore the [Google Agent Development Kit (ADK)](https://google.github.io/adk-docs/) documentation.
 *   Investigate Vertex [AI Agent Builder](https://cloud.google.com/products/agent-builder?e=48754805&hl=en) and [Agentspace](https://cloud.google.com/products/agentspace?e=48754805&hl=en) for more managed agent creation.
 *   Learn more about [Apigee API Management](https://cloud.google.com/solutions/apigee-ai?e=48754805&hl=en) capabilities.
 *   Experiment with different queries for the agents in the [Colab Enterprise](https://cloud.google.com/colab/docs/introduction) notebooks.
