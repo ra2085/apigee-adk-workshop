@@ -108,6 +108,10 @@ The necessary Developer Apps and their API keys (also known as Consumer Keys) ha
     <img src="img/apigee_navigate_apps.png" alt="Apigee Navigation to Developer Apps"  width="400.00" />
     </p>
 
+    <p align="center">
+    <img src="img/apigee_apps.png" alt="Apigee Developer Apps"  width="400.00" />
+    </p>
+
 3.  **Retrieve CRM API Key**:
     *   In the list of apps, find and click on **crm-consumer-app**.
     *   On the `crm-consumer-app` details page, you will see a "Credentials" section.
@@ -333,7 +337,7 @@ This lab demonstrates how ADK can be used to build modular, intelligent componen
 
 <b>What’s next?</b>
 To further your understanding:
-*   Explore the Google Agent Development Kit (ADK) documentation (link to official docs if available, otherwise a general search term).
-*   Investigate Vertex AI Agent Builder for more managed agent creation.
-*   Learn more about Apigee API Management capabilities.
-*   Experiment with different queries for the agents in the Colab Enterprise notebooks.
+*   Explore the [Google Agent Development Kit (ADK)](https://google.github.io/adk-docs/) documentation (link to official docs if available, otherwise a general search term).
+*   Investigate Vertex [AI Agent Builder](https://cloud.google.com/products/agent-builder?e=48754805&hl=en) and [Agentspace](https://cloud.google.com/products/agentspace?e=48754805&hl=en) for more managed agent creation.
+*   Learn more about [Apigee API Management](https://cloud.google.com/solutions/apigee-ai?e=48754805&hl=en) capabilities.
+*   Experiment with different queries for the agents in the [Colab Enterprise](https://cloud.google.com/colab/docs/introduction) notebooks.
