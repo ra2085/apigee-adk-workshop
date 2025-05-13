@@ -2,10 +2,9 @@
 
 ## Introduction
 
-The Google Agent Development Kit (ADK) is a powerful framework for building, running, and managing AI-powered agents. These agents can understand natural language, make decisions, and interact with various tools and services to accomplish complex tasks. When combined with Apigee and Multi-Client Proxy (MCP) toolsets, ADK agents can securely and efficiently leverage backend systems and APIs, enabling sophisticated automation across different business domains.
+The Google Agent Development Kit (ADK) is a powerful framework for building, running, and managing AI-powered agents. These agents can understand natural language, make decisions, and interact with various tools and services to accomplish complex tasks. When combined with Apigee and Model Context Protocol (MCP) toolsets, ADK agents can securely and efficiently leverage backend systems and APIs, enabling sophisticated automation across different business domains.
 
 <p align="center">
-<!-- Replace with a relevant image, e.g., a diagram of ADK agent interacting with MCP tools -->
 <img src="img/adk_mcp_overview.png" alt="ADK and MCP Tools Overview"  width="624.00" />
 </p>
 
@@ -106,7 +105,6 @@ The necessary Developer Apps and their API keys (also known as Consumer Keys) ha
     In the Apigee UI, navigate to **Publish > Apps** using the left-hand side navigation menu.
 
     <p align="center">
-    <!-- Placeholder: Image showing Apigee UI navigation to Publish > Apps -->
     <img src="img/apigee_navigate_apps.png" alt="Apigee Navigation to Developer Apps"  width="400.00" />
     </p>
 

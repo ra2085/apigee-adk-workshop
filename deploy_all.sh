@@ -271,6 +271,8 @@ apigeecli apihub apis create -i warehouse-management-system-api -f ./apigee_bund
 apigeecli apihub apis versions create --api-id warehouse-management-system-api -i 1_0_0 -f ./apigee_bundles/specs/warehouse-management-system-api/version.json --org "$PROJECT" -r "$REGION" --token "$TOKEN"
 apigeecli apihub apis versions specs create --api-id warehouse-management-system-api -d warehouse-management-system-api.yaml -i warehouse-management-system-api -v 1_0_0 -f ./apigee_bundles/specs/warehouse-management-system-api/spec.yaml --org "$PROJECT" -r "$REGION" --token "$TOKEN"
 
+TOKEN=$(gcloud auth print-access-token)
+
 echo "Configuring Apigee proxy target URLs..."
 export CUSTOMERS_API_CR_URL="${CUSTOMERS_API_CR_URL#https://}"
 export ORDERS_API_CR_URL="${ORDERS_API_CR_URL#https://}"
@@ -312,6 +314,8 @@ echo "Importing and Deploying warehouse-management-system-api ..."
 REV=$(apigeecli apis create bundle -f ./apigee_bundles/apigee-mcp-products/warehouse-management-system-api/apiproxy -n warehouse-management-system-api --org "$PROJECT" --token "$TOKEN" --disable-check | jq ."revision" -r)
 apigeecli apis deploy --wait --name warehouse-management-system-api --ovr --rev "$REV" --org "$PROJECT" --env "$APIGEE_ENV" --token "$TOKEN" --sa "$SA_EMAIL"
 
+TOKEN=$(gcloud auth print-access-token)
+
 echo "Creating MCP Product"
 apigeecli products create --name mcp-product --display-name "MCP Product" --envs "$APIGEE_ENV" --approval auto --quota 50 --interval 1 --unit minute --opgrp ./apigee_bundles/mcp-product-opgroup.json --org "$PROJECT" --token "$TOKEN"
 
@@ -336,6 +340,7 @@ apigeecli apps create --name oms-consumer-app --email mcpconsumer@cymbal.com --p
 echo "Creating WMS Developer App"
 apigeecli apps create --name wms-consumer-app --email mcpconsumer@cymbal.com --prods mcp-product,wms-product --callback https://developers.google.com/oauthplayground/ --org "$PROJECT" --token "$TOKEN" --disable-check
 
+TOKEN=$(gcloud auth print-access-token)
 
 CRM_API_KEY=$(apigeecli apps get --name crm-consumer-app --org "$PROJECT" --token "$TOKEN" --disable-check | jq ."[0].credentials[0].consumerKey" -r)
 CRM_SECRET=$(apigeecli apps get --name crm-consumer-app --org "$PROJECT" --token "$TOKEN" --disable-check | jq ."[0].credentials[0].consumerSecret" -r)
@@ -424,6 +429,8 @@ export WMS_PROXY_CR_URL="${WMS_PROXY_CR_URL#https://}"
 sed "${sedi_args[@]}" "s/TARGETURL/$CRM_PROXY_CR_URL/g" ./apigee_bundles/apigee-mcp-products/crm-mcp-proxy/apiproxy/targets/default.xml
 sed "${sedi_args[@]}" "s/TARGETURL/$OMS_PROXY_CR_URL/g" ./apigee_bundles/apigee-mcp-products/oms-mcp-proxy/apiproxy/targets/default.xml
 sed "${sedi_args[@]}" "s/TARGETURL/$WMS_PROXY_CR_URL/g" ./apigee_bundles/apigee-mcp-products/wms-mcp-proxy/apiproxy/targets/default.xml
+
+TOKEN=$(gcloud auth print-access-token)
 
 echo "Importing and Deploying crm-mcp-proxy ..."
 REV=$(apigeecli apis create bundle -f ./apigee_bundles/apigee-mcp-products/crm-mcp-proxy/apiproxy -n crm-mcp-proxy --org "$PROJECT" --token "$TOKEN" --disable-check | jq ."revision" -r)
