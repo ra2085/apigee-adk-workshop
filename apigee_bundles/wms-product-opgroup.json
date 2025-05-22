@@ -15,7 +15,7 @@
         "attributes": [
           {
             "name": "hub_api",
-            "value": "warehouse-management-api"
+            "value": "warehouse-management-system-api"
           },
           {
             "name": "hub_version",
