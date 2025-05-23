@@ -1,7 +1,7 @@
 {
     "operationConfigs": [
       {
-        "apiSource": "warehouse-management-api",
+        "apiSource": "warehouse-management-system-api",
         "operations": [
           {
             "resource": "/"
