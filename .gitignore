@@ -1,5 +1,4 @@
 config
-.env
 .envrc
 to_delete
 *.code-workspace
@@ -9,3 +8,4 @@ target
 schema
 __pycache__
 .DS_Store
+.adk
