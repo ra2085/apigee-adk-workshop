@@ -18,7 +18,7 @@ fi
 gcloud alpha agent-identity connectors create apigee \
     --location="us-central1" \
     --description="apigee" \
-    --two-legged-oauth-client-id=$API_KEEY \
+    --two-legged-oauth-client-id=$API_KEY \
     --two-legged-oauth-client-secret=$API_SECRET \
     --two-legged-oauth-token-endpoint="https://34.107.220.83.nip.io/oauth2/token" \
     --project $PROJECT_ID
