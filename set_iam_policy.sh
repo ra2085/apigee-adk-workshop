@@ -15,6 +15,9 @@ if [ -z "$API_SECRET" ]; then
   exit
 fi
 
+# Replace placeholders with actual Project ID in agent.py
+sed -i "s/PROJECT_PLACEHOLDER/$PROJECT_ID/g" ./merchandising_agent/agent.py
+
 gcloud alpha agent-identity connectors create apigee \
     --location="us-central1" \
     --description="apigee" \
@@ -40,3 +43,6 @@ gcloud alpha agent-identity connectors add-iam-policy-binding apigee \
           --location=us-central1 \
           --member="principalSet://agents.global.org-$ORG_ID.system.id.goog/attribute.platformContainer/aiplatform/projects/$PROJECT_NUMBER" \
           --role="roles/iamconnectors.user"
+
+sleep 2
+

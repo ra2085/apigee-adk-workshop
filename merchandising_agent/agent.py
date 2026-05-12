@@ -7,7 +7,6 @@ from google.adk.integrations.agent_identity import GcpAuthProvider, GcpAuthProvi
 from google.adk.auth.auth_tool import AuthConfig
 from google.adk.tools.authenticated_function_tool import AuthenticatedFunctionTool
 
-PROJECT = os.environ.get('GOOGLE_CLOUD_PROJECT')
 LOCATION = os.environ.get('GOOGLE_CLOUD_LOCATION')
 AUTH_CONNECTOR = os.environ.get("AUTH_CONNECTOR")
 APIGEE_HOST = os.environ.get("APIGEE_HOST")
@@ -16,7 +15,7 @@ AI_GATEWAY_PATH = "/ai-gateway/v1"
 CredentialManager.register_auth_provider(GcpAuthProvider())
 
 auth_scheme = GcpAuthProviderScheme(
-    name=f"projects/{PROJECT}/locations/{LOCATION}/connectors/{AUTH_CONNECTOR}"
+    name=f"projects/PROJECT_PLACEHOLDER/locations/{LOCATION}/connectors/{AUTH_CONNECTOR}"
 )
 
 system_instruction = (
