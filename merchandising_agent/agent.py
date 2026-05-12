@@ -15,7 +15,7 @@ AI_GATEWAY_PATH = "/ai-gateway/v1"
 CredentialManager.register_auth_provider(GcpAuthProvider())
 
 auth_scheme = GcpAuthProviderScheme(
-    name=f"projects/PROJECT_PLACEHOLDER/locations/{LOCATION}/connectors/{AUTH_CONNECTOR}"
+    name=f"projects/PROJECT_PLACEHOLDER/locations/us-central1/connectors/apigee"
 )
 
 system_instruction = (
