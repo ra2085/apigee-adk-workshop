@@ -29,7 +29,7 @@ system_instruction = (
 )
 
 model = ApigeeLlm(
-    model="apigee/gemini-3.1-flash-lite-preview",
+    model="apigee/gemini-3.1-flash-lite",
     proxy_url=f"https://{APIGEE_HOST}{AI_GATEWAY_PATH}",
 )
 
